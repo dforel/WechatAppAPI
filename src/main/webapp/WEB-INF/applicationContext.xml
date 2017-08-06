@@ -182,16 +182,16 @@
     <bean id="goldSlaveDataSource" class="com.alibaba.druid.pool.DruidDataSource"
           init-method="init" destroy-method="close">
         <property name="driverClassName">
-            <value>${goldSlave.jdbc.driverClassName}</value>
+            <value>${serviceSlave.jdbc.driverClassName}</value>
         </property>
         <property name="url">
-            <value>${serviceSlavegoldSlave.jdbc.url}</value>
+            <value>${serviceSlave.jdbc.url}</value>
         </property>
         <property name="username">
-            <value>${goldSlave.jdbc.username}</value>
+            <value>${serviceSlave.jdbc.username}</value>
         </property>
         <property name="password">
-            <value>${goldSlave.jdbc.password}</value>
+            <value>${serviceSlave.jdbc.password}</value>
         </property>
 
         <!-- 通过别名的方式配置扩展插件，常用的插件有：监控统计用的filter:stat 日志用的filter:log4j 防御sql注入的filter:wall -->
