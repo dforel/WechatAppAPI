@@ -11,4 +11,7 @@ public class CommonString {
 
     // usertoken的cookie键
     public  static final String UserTokenKey = "Utoken";
+
+    // servicetoken的cookie、url、post键名
+    public  static final String ServiceTokenKey = "Stoken";
 }

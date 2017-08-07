@@ -3,12 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
    http://www.springframework.org/schema/beans/spring-beans.xsd
    http://www.springframework.org/schema/context
    http://www.springframework.org/schema/context/spring-context.xsd
    http://www.springframework.org/schema/tx
    http://www.springframework.org/schema/tx/spring-tx.xsd
+   http://www.springframework.org/schema/data/jpa
+   http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
    http://www.springframework.org/schema/aop
    http://www.springframework.org/schema/aop/spring-aop.xsd">
 
@@ -23,6 +26,8 @@
             </list>
         </property>
     </bean>
+
+
 
     <!-- 扫描类包，将标注Spring注解的类自动转化Bean，同时完成Bean的注入 -->
     <context:component-scan base-package="com.df.common" />
@@ -129,7 +134,7 @@
     </bean>
 
     <!--goldMaster 配置数据源 -->
-    <bean id="goldMasterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+    <bean id="serviceMasterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
           init-method="init" destroy-method="close">
         <property name="driverClassName">
             <value>${serviceMaster.jdbc.driverClassName}</value>
@@ -179,7 +184,7 @@
     </bean>
 
     <!--goldSlave 配置数据源 -->
-    <bean id="goldSlaveDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+    <bean id="serviceSlaveDataSource" class="com.alibaba.druid.pool.DruidDataSource"
           init-method="init" destroy-method="close">
         <property name="driverClassName">
             <value>${serviceSlave.jdbc.driverClassName}</value>
@@ -243,22 +248,83 @@
         <property name="targetDataSources">
             <map>
                 <entry key="slave" value-ref="slaveDataSource" />
-                <entry key="goldMaster" value-ref="goldMasterDataSource" />
-                <entry key="goldSlave" value-ref="goldSlaveDataSource" />
+                <entry key="serviceMaster" value-ref="serviceMasterDataSource" />
+                <entry key="serviceSlave" value-ref="serviceSlaveDataSource" />
             </map>
         </property>
         <property name="defaultTargetDataSource" ref="masterDataSource" />
     </bean>
+
+    <!-- 配置sessionFactory -->
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="packagesToScan" value="com.df.model" />
+        <property name="hibernateProperties">
+            <props>
+
+            </props>
+        </property>
+    </bean>
+
+    <!-- Hibernate对Jpa的实现 -->
+    <bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+
+
+    <!-- 实体管理器 -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.df.model" />
+        <property name="persistenceProvider">
+            <bean class="org.hibernate.ejb.HibernatePersistence" />
+        </property>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="generateDdl" value="false" />
+                <property name="database" value="MYSQL" />
+                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+                <!-- <property name="showSql" value="true" /> -->
+            </bean>
+        </property>
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.query.substitutions" value="true 1, false 0" />
+                <entry key="hibernate.default_batch_fetch_size" value="16" />
+                <entry key="hibernate.max_fetch_depth" value="2" />
+                <entry key="hibernate.generate_statistics" value="true" />
+                <entry key="hibernate.bytecode.use_reflection_optimizer" value="true" />
+                <entry key="hibernate.cache.use_second_level_cache" value="false" />
+                <entry key="hibernate.cache.use_query_cache" value="false" />
+            </map>
+        </property>
+    </bean>
+
+    <!-- 配置Spring Data JPA扫描目录 -->
+    <jpa:repositories base-package="com.df.dao"
+                      repository-impl-postfix="Impl"
+                      query-lookup-strategy = "create-if-not-found"
+                      entity-manager-factory-ref="entityManagerFactory"
+                      transaction-manager-ref="transactionManager"  />
+    <!-- end -->
 
     <!-- 配置Jdbc模板 -->
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
+    <!--第三步-->
+    <!-- 事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
     <!-- 配置事务管理器 -->
-    <bean id="transactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-          p:dataSource-ref="dataSource" />
+    <!--<bean id="transactionManager"-->
+          <!--class="org.springframework.jdbc.datasource.DataSourceTransactionManager"-->
+          <!--p:dataSource-ref="dataSource"  />-->
 
     <!-- 数据源切换类 -->
     <bean id="dataSourceChoose" class="com.df.interceptor.DataSourceChoose" />
@@ -271,11 +337,25 @@
             <aop:before method="before" pointcut-ref="serviceMethod" />
         </aop:aspect>
     </aop:config>
+
+    <!-- 事务 -->
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" />
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="find*" read-only="true" />
+            <tx:method name="select*" read-only="true" />
+            <tx:method name="delete*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="add*" propagation="REQUIRED" />
+            <tx:method name="insert*" propagation="REQUIRED" />
         </tx:attributes>
     </tx:advice>
+    <!-- 事务入口 -->
+    <aop:config>
+        <aop:pointcut id="allServiceMethod" expression="execution(* com.df.service..*(..))" />
+        <aop:advisor pointcut-ref="allServiceMethod" advice-ref="txAdvice" />
+    </aop:config>
 
     <!-- Memcached 配置 -->
     <bean id="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder"

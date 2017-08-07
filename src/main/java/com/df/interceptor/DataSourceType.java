@@ -9,10 +9,10 @@ public enum DataSourceType {
 	Slave("slave"),
 
 	// 金币主库
-	GoldMaster("master"),
+	ServiceMaster("serviceMaster"),
 
 	// 金币从库
-	GoldSlave("slave");
+	ServiceSlave("serviceSlave");
 
 	private DataSourceType(String name) {
 		this.name = name;

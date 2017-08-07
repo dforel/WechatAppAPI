@@ -28,19 +28,31 @@
             <!--<bean class="com.df.interceptor.TestInterceptor">-->
             <!--</bean>-->
         <!--</mvc:interceptor>-->
-
         <mvc:interceptor>
             <mvc:mapping path="/web/**"/>
             <bean class="com.df.interceptor.AuthorityAnnotationInterceptor"></bean>
         </mvc:interceptor>
 
+        <mvc:interceptor>
+            <mvc:mapping path="/api/**"/>
+            <bean class="com.df.api.interceptor.ApiAuthorityAnnotationInterceptor"></bean>
+        </mvc:interceptor>
+
     </mvc:interceptors>
 
+    <!-- API 接口跨域配置 -->
+    <mvc:cors>
+        <mvc:mapping path="/api/**" allowed-origins="*"
+                     allowed-methods="POST, GET, OPTIONS, DELETE, PUT"
+                     allowed-headers="Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+                     allow-credentials="true" />
+    </mvc:cors>
 
 
     <!-- 自动扫描controller包中的控制器 -->
-    <context:component-scan base-package="com.df.api.controller" />
+    <context:component-scan base-package="com.df.api" />
     <context:component-scan base-package="com.df.controller" />
+    <context:component-scan base-package="com.df.api.*.controller" />
     <!-- 扫描定时作业调度包 -->
     <task:annotation-driven />
     <context:component-scan base-package="com.df.quartz"/>
@@ -81,13 +93,7 @@
         </property>
     </bean>
 
-    <!-- API 接口跨域配置 -->
-    <mvc:cors>
-        <mvc:mapping path="/api/**" allowed-origins="*"
-                     allowed-methods="POST, GET, OPTIONS, DELETE, PUT"
-                     allowed-headers="Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-                     allow-credentials="true" />
-    </mvc:cors>
+
     <!-- 上传文件拦截，设置最大上传文件大小 30M=30*1024*1024(B)=31457280 bytes -->
     <!--<bean id="multipartResolver"-->
           <!--class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->

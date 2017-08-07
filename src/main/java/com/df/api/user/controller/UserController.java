@@ -1,10 +1,12 @@
 package com.df.api.user.controller;
 
-import com.df.api.user.interceptor.ApiAuthority;
-import com.df.api.user.interceptor.ApiAuthorityType;
+import com.df.api.interceptor.ApiAuthority;
+import com.df.api.interceptor.ApiAuthorityType;
 import com.df.common.StrUtil;
+import com.df.model.AcountcoinEntity;
 import com.df.model.UserBasis;
 import com.df.service.UserBasisService;
+import com.df.service.imp.AccountcoinServiceImp;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "get", produces = "application/json;charset=UTF-8", method = { RequestMethod.GET })
-    @ApiAuthority(ApiAuthorityType.Authority_2)
+    @ApiAuthority(authorityLevels = ApiAuthorityType.Authority_1,sid = 1)
     public String get(@RequestParam("id") long id) {
         int code = -1;
         String msg = "";
@@ -65,7 +67,7 @@ public class UserController {
     @CrossOrigin(origins = "*", maxAge = 3600)
     @ResponseBody
     @RequestMapping(value = "getlist", produces = "application/json;charset=UTF-8", method = { RequestMethod.GET })
-    @ApiAuthority(ApiAuthorityType.Authority_2)
+    @ApiAuthority(authorityLevels = ApiAuthorityType.Authority_1,sid = 1)
     public String getList() {
         int code = -1;
         String msg = "";
@@ -92,7 +94,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "post", produces = "application/json;charset=UTF-8", method = { RequestMethod.POST })
-    @ApiAuthority(ApiAuthorityType.Authority_2)
+    @ApiAuthority(authorityLevels = ApiAuthorityType.Authority_1,sid = 1)
     public String post(HttpServletRequest oRequest, HttpServletResponse oResponse) {
         int code = -1;
         String msg = "";
@@ -121,6 +123,7 @@ public class UserController {
         return new Gson().toJson(responseMap);
     }
 
+
     /**
      * delete
      *
@@ -129,7 +132,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "delete", produces = "application/json;charset=UTF-8", method = { RequestMethod.DELETE })
-    @ApiAuthority(ApiAuthorityType.Authority_2)
+    @ApiAuthority(authorityLevels = ApiAuthorityType.Authority_1,sid = 1)
     public String delete(@RequestParam("id") long id) {
         int code = -1;
         String msg = "";
@@ -148,6 +151,30 @@ public class UserController {
         return new Gson().toJson(responseMap);
     }
 
+    @Autowired
+    private AccountcoinServiceImp acsi ;
+    /**
+     * testGetList
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "testGetList", produces = "application/json;charset=UTF-8", method = { RequestMethod.GET })
+    @ApiAuthority(authorityLevels = ApiAuthorityType.Authority_1,sid = 1)
+    public String testGetList() {
+        int code = -1;
+        String msg = "";
+        List<AcountcoinEntity> list = acsi.testGetList();
+
+
+        Map<String, Object> responseMap = new HashMap<String, Object>();
+        responseMap.put("code", code);
+        responseMap.put("msg", msg);
+        responseMap.put("params", list);
+        responseMap.put("rows", "");
+        return new Gson().toJson(responseMap);
+    }
+
     /**
      * put
      *
@@ -157,7 +184,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "put", produces = "application/json;charset=UTF-8", method = { RequestMethod.POST })
-    @ApiAuthority(ApiAuthorityType.Authority_2)
+    @ApiAuthority(authorityLevels = ApiAuthorityType.Authority_1,sid = 1)
     public String put(HttpServletRequest oRequest, HttpServletResponse oResponse) {
         int code = -1;
         String msg = "";

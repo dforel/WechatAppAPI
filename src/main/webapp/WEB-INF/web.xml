@@ -7,20 +7,28 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-    <servlet>
-        <servlet-name>springMVC</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>springMVC</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
 
-    <!-- 连接池 启用Web监控统计功能   start-->
+    <!-- 配置proxool的配置文件路径
+ <context-param>
+   <param-name>proxoolConfigLocation</param-name>
+   <param-value>WEB-INF/proxool.xml</param-value>
+ </context-param>
+ proxool连接池监听器  -->
+
+   <listener>
+       <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+   </listener>
+   <servlet>
+       <servlet-name>springMVC</servlet-name>
+       <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+       <load-on-startup>1</load-on-startup>
+   </servlet>
+   <servlet-mapping>
+       <servlet-name>springMVC</servlet-name>
+       <url-pattern>/</url-pattern>
+   </servlet-mapping>
+
+   <!-- 连接池 启用Web监控统计功能   start-->
     <filter>
         <filter-name>DruidWebStatFilter</filter-name>
         <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
