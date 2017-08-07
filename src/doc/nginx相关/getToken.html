@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>获取toke</title>
+  </head>
+  <body>
+    <button type="button" name="button" onclick="getToken()">点击获取token</button>
+    <script type="text/javascript">
+       function getToken(){
+
+       }
+
+
+       (function(url,method,successcalback){
+         var cajax=function(){
+           var xhr = getXHR();
+           xhr.onreadystatechange=successcalback;
+           xhr.open("GET",url,true);
+           xhr.send(null);
+
+         }
+
+         /*
+         兼容性获取 xhr对象
+         */
+         function getXHR(){
+           var xhr = new XMLHttpRequest();
+          try{
+            // Firefox, Opera 8.0+, Safari
+            xhr = new XMLHttpRequest();
+          }catch(e){
+            try {
+              // Internet Explorer
+              xhr = AtiveXObject("Msxml2.XMLHTTP")
+            } catch (e) {
+              xhr = AtiveXObject("Microsoft.XMLHTTP")
+            }
+          }
+          return xhr;
+         }
+
+       }())
+
+
+
+
+    </script>
+  </body>
+</html>
