@@ -4,12 +4,13 @@ import com.df.model.InstanceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  * Created by Administrator on 2017-08-06.
  */
-public interface instanceDao extends JpaRepository<InstanceEntity, Long> {
-
+@Repository
+public interface InstanceDao extends JpaRepository<InstanceEntity, Long> {
 
     @Query("select t from InstanceEntity t where t.iid = ?1")
     InstanceEntity findByUserid(String userid);

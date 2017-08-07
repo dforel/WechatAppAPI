@@ -1,8 +1,9 @@
 package com.df.service.imp;
 
-import com.df.dao.instanceDao;
+import com.df.dao.InstanceDao;
 import com.df.interceptor.DataSource;
 import com.df.interceptor.DataSourceType;
+import com.df.model.InstanceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,10 @@ import org.springframework.stereotype.Service;
 public class instanceServiceImp {
 
     @Autowired
-    private instanceDao idao ;
+    private InstanceDao instanceDao ;
 
 
-    public int getCount(String itoken,long sid){ return idao.countByItokenAndSidAndCountThenZero(itoken,sid); }
+    public int getCount(String itoken, long sid){ return instanceDao.countByItokenAndSidAndCountThenZero(itoken,sid); }
 
     /**
      * 判断是否toke对应服务，并且使用次数仍大于0
@@ -33,5 +34,9 @@ public class instanceServiceImp {
     }
 
     @DataSource(DataSourceType.ServiceMaster)
-    public void subCount(String itoken,long sid){  idao.updateSubCount(itoken,sid); }
+    public void subCount(String itoken,long sid){  instanceDao.updateSubCount(itoken,sid); }
+
+    @DataSource(DataSourceType.ServiceMaster)
+    public void saveSomething(InstanceEntity entity){  instanceDao.save(entity); }
+
 }

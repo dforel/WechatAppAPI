@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 @Repository
-public class UserBasisDao {
+public class UserBasis1Dao {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;

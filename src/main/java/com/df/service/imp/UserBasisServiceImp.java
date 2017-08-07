@@ -1,7 +1,7 @@
 package com.df.service.imp;
 
 import com.df.cache.UserBasisCache;
-import com.df.dao.UserBasisDao;
+import com.df.dao.UserBasis1Dao;
 import com.df.model.UserBasis;
 import com.df.service.UserBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ import java.util.Map;
 public class UserBasisServiceImp implements UserBasisService {
 
 	@Autowired
-	private UserBasisDao UserBasisdao;
+	private UserBasis1Dao userBasisdao1;
 	@Autowired
 	private UserBasisCache UserBasiscache;
 
 	@Override
 	public long Save(UserBasis entity) {
-		long id = UserBasisdao.Save(entity);
+		long id = userBasisdao1.Save(entity);
 		if (id > 0) {
 			UserBasiscache.set(entity);
 		}
@@ -30,7 +30,7 @@ public class UserBasisServiceImp implements UserBasisService {
 
 	@Override
 	public Boolean Delete(long ID) {
-		boolean result = UserBasisdao.Delete(ID);
+		boolean result = userBasisdao1.Delete(ID);
 		if (result) {
 			UserBasiscache.delete(ID);
 		}
@@ -49,28 +49,28 @@ public class UserBasisServiceImp implements UserBasisService {
 
 	@Override
 	public Boolean isExistPhone(String phone) {
-		return UserBasisdao.isExitPhone(phone);
+		return userBasisdao1.isExitPhone(phone);
 	}
 
 	@Override
 	public UserBasis getEntity(String phone) {
-		return UserBasisdao.getEntity(phone);
+		return userBasisdao1.getEntity(phone);
 	}
 
 	@Override
 	public int getListCount(Map<String, Object> whereMap) {
 		//throw new RuntimeException();
-		return UserBasisdao.getListCount(whereMap);
+		return userBasisdao1.getListCount(whereMap);
 	}
 	
 	@Override
 	public List<UserBasis> getList(Map<String, Object> whereMap, String OrderBy, int nStart, int nLimit) {
-		return UserBasisdao.getList(whereMap, OrderBy, nStart, nLimit);
+		return userBasisdao1.getList(whereMap, OrderBy, nStart, nLimit);
 	}
 
 	@Override
 	public List<UserBasis> getList() {
-		return UserBasisdao.getList();
+		return userBasisdao1.getList();
 	}
 
 }

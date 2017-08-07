@@ -2,7 +2,6 @@ package com.df.service.imp;
 
 import com.df.dao.AcountcoinDao;
 import com.df.model.AcountcoinEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,12 +12,15 @@ import java.util.List;
 @Service
 public class AccountcoinServiceImp {
 
-    @Autowired
-    private AcountcoinDao acd ;
+    private AcountcoinDao acountcoinDao;
 
-    public void testAdd(AcountcoinEntity um){ acd.save(um); }
+    public void setAcountcoinDao(AcountcoinDao acountcoinDao) {
+        this.acountcoinDao = acountcoinDao;
+    }
 
-    public AcountcoinEntity testGet(long id){ return acd.getOne(id); }
+    public void testAdd(AcountcoinEntity um){ acountcoinDao.save(um); }
 
-    public List<AcountcoinEntity> testGetList(){ return acd.findAll(); }
+    public AcountcoinEntity testGet(long id){ return acountcoinDao.getOne(id); }
+
+    public List<AcountcoinEntity> testGetList(){ return acountcoinDao.findAll(); }
 }

@@ -28,7 +28,6 @@
     </bean>
 
 
-
     <!-- 扫描类包，将标注Spring注解的类自动转化Bean，同时完成Bean的注入 -->
     <context:component-scan base-package="com.df.common" />
     <context:component-scan base-package="com.df.dao" />
@@ -37,7 +36,7 @@
     <context:component-scan base-package="com.df.quartz" />
     <context:component-scan base-package="com.df.activemq" />
     <context:component-scan base-package="com.df.model" />
-    <context:component-scan base-package="com.df.api.controller" />
+    <context:component-scan base-package="com.df.api.*" />
     <context:component-scan base-package="com.df.controller" />
 
     <!--master 配置数据源 -->
@@ -256,8 +255,7 @@
     </bean>
 
     <!-- 配置sessionFactory -->
-    <bean id="sessionFactory"
-          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="dataSource"></property>
         <property name="packagesToScan" value="com.df.model" />
         <property name="hibernateProperties">

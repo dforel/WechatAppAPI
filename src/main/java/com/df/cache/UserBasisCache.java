@@ -1,6 +1,6 @@
 package com.df.cache;
 
-import com.df.dao.UserBasisDao;
+import com.df.dao.UserBasis1Dao;
 import com.df.model.UserBasis;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 import org.apache.log4j.Logger;
@@ -14,7 +14,7 @@ public class UserBasisCache extends MemcachedBasis {
 
 	private Logger log = Logger.getLogger(UserBasisCache.class);
 	@Autowired
-	private UserBasisDao userBasisDao;
+	private UserBasis1Dao userBasis1Dao;
 
 	/**
 	 * 设置缓存
@@ -45,7 +45,7 @@ public class UserBasisCache extends MemcachedBasis {
 		try {
 			result = memcachedClient.get(getRegExistCacheKey(Name));
 			if (result == null ) {
-				result = userBasisDao.isExitName(Name);
+				result = userBasis1Dao.isExitName(Name);
 				memcachedClient.set(getRegExistCacheKey(Name),super.Exptime,result);
 			}
 		} catch (TimeoutException | InterruptedException | MemcachedException e) {
@@ -68,12 +68,12 @@ public class UserBasisCache extends MemcachedBasis {
 		try {
 			entity = memcachedClient.get(getCacheKey(id));
 			if (entity == null || entity.getId() <= 0) {
-				entity = userBasisDao.getEntity(id);
+				entity = userBasis1Dao.getEntity(id);
 				this.set(entity);
 			}
 		} catch (TimeoutException | InterruptedException | MemcachedException e) {
 			log.error("", e);
-			entity = userBasisDao.getEntity(id);
+			entity = userBasis1Dao.getEntity(id);
 		}
 		return entity;
 	}

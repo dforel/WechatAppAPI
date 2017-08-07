@@ -17,8 +17,6 @@
       http://www.springframework.org/schema/task/spring-task.xsd ">
     <!-- 使用默认的注解映射 -->
     <mvc:annotation-driven />
-    <mvc:resources location="/" mapping="/index.jsp" />
-
 
     <mvc:interceptors>
     <!-- 直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->
@@ -53,6 +51,8 @@
     <context:component-scan base-package="com.df.api" />
     <context:component-scan base-package="com.df.controller" />
     <context:component-scan base-package="com.df.api.*.controller" />
+    <context:component-scan base-package="com.df.dao" />
+
     <!-- 扫描定时作业调度包 -->
     <task:annotation-driven />
     <context:component-scan base-package="com.df.quartz"/>
