@@ -5,7 +5,7 @@ import com.df.api.interceptor.ApiAuthorityType;
 import com.df.common.StrUtil;
 import com.df.model.AcountcoinEntity;
 import com.df.model.UserBasis;
-import com.df.service.UserBasisService;
+import com.df.service.UserBasisService2;
 import com.df.service.imp.AccountcoinServiceImp;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
@@ -27,7 +27,7 @@ public class UserController {
     private static Logger log = Logger.getLogger(UserController.class);
 
     @Autowired
-    private UserBasisService userBasisService;
+    private UserBasisService2 userBasisService;
 
     /**
      * get

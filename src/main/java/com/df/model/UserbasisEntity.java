@@ -1,5 +1,7 @@
 package com.df.model;
 
+import com.df.common.MD5Util;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -19,7 +21,24 @@ public class UserbasisEntity {
     private int permission;
     private String email;
 
+
+    public UserbasisEntity(){
+
+    }
+
+    public UserbasisEntity(long id,String name,String password,String phone,int status){
+        this.id = id;
+        this.name = name;
+        this.password = MD5Util.GetMD5Code32(password);
+        this.phone = phone;
+        this.status = status;
+        this.permission = 0;
+        this.createtime = new Timestamp(System.currentTimeMillis());
+        this.updatetime = new Timestamp(System.currentTimeMillis());
+    }
+
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     public long getId() {
         return id;

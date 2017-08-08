@@ -1,7 +1,7 @@
 package com.df.api.express.controller;
 
 import com.df.api.express.model.shentongTrace;
-import com.df.api.express.shentong;
+import com.df.api.express.service.shentong;
 import com.df.api.interceptor.ApiAuthority;
 import com.df.api.interceptor.ApiAuthorityType;
 import com.google.gson.Gson;

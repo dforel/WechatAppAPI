@@ -1,7 +1,7 @@
 package com.df.cache;
 
-import com.df.dao.UserBasis1Dao;
-import com.df.model.UserBasis;
+import com.df.dao.UserbasisDao;
+import com.df.model.UserbasisEntity;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,12 @@ import java.util.concurrent.TimeoutException;
 public class UserBasisCache extends MemcachedBasis {
 
 	private Logger log = Logger.getLogger(UserBasisCache.class);
+
+	//@Autowired
+	//private UserBasis1Dao userBasis1Dao;
+
 	@Autowired
-	private UserBasis1Dao userBasis1Dao;
+	private UserbasisDao userbasisDao;
 
 	/**
 	 * 设置缓存
@@ -23,7 +27,7 @@ public class UserBasisCache extends MemcachedBasis {
 	 *            用户model
 	 * @return
 	 */
-	public Boolean set(UserBasis model) {
+	public Boolean set(UserbasisEntity model) {
 		Boolean result = false;
 		try {
 			result = memcachedClient.set(getCacheKey(model.getId()), super.Exptime, model);
@@ -45,7 +49,8 @@ public class UserBasisCache extends MemcachedBasis {
 		try {
 			result = memcachedClient.get(getRegExistCacheKey(Name));
 			if (result == null ) {
-				result = userBasis1Dao.isExitName(Name);
+				Integer num = userbasisDao.ExistsByName(Name);
+				result = num>0?true:false;
 				memcachedClient.set(getRegExistCacheKey(Name),super.Exptime,result);
 			}
 		} catch (TimeoutException | InterruptedException | MemcachedException e) {
@@ -63,17 +68,19 @@ public class UserBasisCache extends MemcachedBasis {
 	 *            用户ID
 	 * @return
 	 */
-	public UserBasis get(long id) {
-		UserBasis entity = new UserBasis();
+	public UserbasisEntity get(long id) {
+		UserbasisEntity entity = new UserbasisEntity();
 		try {
 			entity = memcachedClient.get(getCacheKey(id));
 			if (entity == null || entity.getId() <= 0) {
-				entity = userBasis1Dao.getEntity(id);
+				entity =  userbasisDao.findOne(id);
+				//entity = userBasis1Dao.getEntity(id);
 				this.set(entity);
 			}
 		} catch (TimeoutException | InterruptedException | MemcachedException e) {
 			log.error("", e);
-			entity = userBasis1Dao.getEntity(id);
+			entity =  userbasisDao.findOne(id);
+			//entity = userBasis1Dao.getEntity(id);
 		}
 		return entity;
 	}

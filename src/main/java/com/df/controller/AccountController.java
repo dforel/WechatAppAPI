@@ -5,7 +5,7 @@ import com.df.cache.LoginTokenCache;
 import com.df.common.*;
 import com.df.interceptor.Authority;
 import com.df.interceptor.AuthorityType;
-import com.df.model.UserBasis;
+import com.df.model.UserbasisEntity;
 import com.df.service.UserBasisService;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
@@ -57,13 +57,13 @@ public class AccountController {
 			msg = "验证码异常！";
 			code = RCodeUtil.VALIDATE_ERR;
 		}  else {
-			UserBasis entity = userBasisService.getEntity(phone);
+			UserbasisEntity entity = userBasisService.getEntity(phone);
 			if(!validateCodeUtil.verifyCode(verifysession,validatecode)){
 				msg = "验证码错误！";
 				code = RCodeUtil.WRONG_VALIDATE_CODE;
 			}
 			else if (entity != null && entity.getId() > 0) {
-				// System.out.println(MD5Util.GetMD5Code32(password));
+				//
 				if (entity.getPassword().equals(MD5Util.GetMD5Code32(password))) {
 					code = RCodeUtil.SUCCESS;
 					msg = "登录成功！";
@@ -76,7 +76,6 @@ public class AccountController {
 					c2.setPath("/");
 					c2.setMaxAge(3600);
 					response.addCookie(c2);
-
 					// 登录成功以后返回cookies及登录token
 					params.put( CommonString.LoginTokenKey ,randomToken);
 				} else {
@@ -139,7 +138,7 @@ public class AccountController {
 				msg = "电话已存在！";
 				code = RCodeUtil.PHONE_EXIST;
 			} else{
-				UserBasis entity = new UserBasis(StrUtil.DEFAULT_NULL,name,password,phone,1);
+				UserbasisEntity entity = new UserbasisEntity(StrUtil.DEFAULT_NULL,name,password,phone,1);
 				long id = userBasisService.Save(entity);
 				if (id > 0) {
 					code = RCodeUtil.SUCCESS;
@@ -149,7 +148,6 @@ public class AccountController {
 					msg = "注册失败，请稍后再试！";
 				}
 			}
-
 		}
 
 		Map<String, Object> responseMap = new HashMap<String, Object>();

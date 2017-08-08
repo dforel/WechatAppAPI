@@ -1,76 +1,105 @@
 package com.df.service.imp;
 
 import com.df.cache.UserBasisCache;
-import com.df.dao.UserBasis1Dao;
-import com.df.model.UserBasis;
+import com.df.dao.UserbasisDao;
+import com.df.model.UserbasisEntity;
 import com.df.service.UserBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * Created by Administrator on 2017-08-08.
+ */
 @Service
 public class UserBasisServiceImp implements UserBasisService {
 
-	@Autowired
-	private UserBasis1Dao userBasisdao1;
-	@Autowired
-	private UserBasisCache UserBasiscache;
+    @Autowired
+    private UserbasisDao userbasisDao;
+    @Autowired
+    private UserBasisCache UserBasiscache;
+    /**
+     * 保存
+     * @param entity 用户实体
+     * @return 用户id
+     */
+    @Override
+    public long Save(UserbasisEntity entity) {
+        UserbasisEntity new_entity = userbasisDao.save(entity);
+        if(new_entity.getId()>0){
+            UserBasiscache.set(entity);
+        }
+        return new_entity.getId();
+    }
 
-	@Override
-	public long Save(UserBasis entity) {
-		long id = userBasisdao1.Save(entity);
-		if (id > 0) {
-			UserBasiscache.set(entity);
-		}
-		return id;
-	}
+    @Override
+    public void Delete(long ID) {
+        userbasisDao.delete(ID);
+        UserBasiscache.delete(ID);
+    }
 
-	@Override
-	public Boolean Delete(long ID) {
-		boolean result = userBasisdao1.Delete(ID);
-		if (result) {
-			UserBasiscache.delete(ID);
-		}
-		return result;
-	}
+    @Override
+    public UserbasisEntity getEntity(long ID) {
+        return UserBasiscache.get(ID);
+    }
 
-	@Override
-	public UserBasis getEntity(long ID) {
-		return UserBasiscache.get(ID);
-	}
+    @Override
+    public Boolean isExistName(String name) {
+        Integer ss= userbasisDao.countByName(name);
+        return ss>0;
+    }
 
-	@Override
-	public Boolean isExistName(String name) {
-		return UserBasiscache.isExitName(name);
-	}
+    @Override
+    public Boolean isExistPhone(String phone) {
+        Integer ss= userbasisDao.countByPhone(phone);
+        return ss>0;
+    }
 
-	@Override
-	public Boolean isExistPhone(String phone) {
-		return userBasisdao1.isExitPhone(phone);
-	}
+    @Override
+    public UserbasisEntity getEntity(String phone) {
+        return userbasisDao.findFirstByPhone(phone);
+    }
 
-	@Override
-	public UserBasis getEntity(String phone) {
-		return userBasisdao1.getEntity(phone);
-	}
+    @Override
+    public List<UserbasisEntity> getList(Map<String, Object> whereMap, String OrderBy,String OrderByProperties, int page, int size) {
 
-	@Override
-	public int getListCount(Map<String, Object> whereMap) {
-		//throw new RuntimeException();
-		return userBasisdao1.getListCount(whereMap);
-	}
-	
-	@Override
-	public List<UserBasis> getList(Map<String, Object> whereMap, String OrderBy, int nStart, int nLimit) {
-		return userBasisdao1.getList(whereMap, OrderBy, nStart, nLimit);
-	}
+        Specification<UserbasisEntity > spe =new  Specification<UserbasisEntity>(){
+            public Predicate toPredicate(Root<UserbasisEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                for (Map.Entry<String, Object> entry : whereMap.entrySet()){
+                    Path<String> nameExp = root.get(entry.getKey());
+                    Predicate pr =   cb.equal(nameExp, entry.getValue());
+                    query.where(pr);
+                }
+                return null;
+            }
+        };
+        OrderByProperties = OrderByProperties ==null?"id":OrderByProperties;
+        Pageable pg =new PageRequest(page,size,Sort.Direction.fromStringOrNull(OrderBy),OrderByProperties);
+        return userbasisDao.findAll(spe,pg).getContent();
+    }
 
-	@Override
-	public List<UserBasis> getList() {
-		return userBasisdao1.getList();
-	}
+    @Override
+    public int getListCount(Map<String, Object> whereMap) {
+        Specification<UserbasisEntity > spe = (root, query, cb) -> {
+            for (Map.Entry<String, Object> entry : whereMap.entrySet()){
+                Path<String> nameExp = root.get(entry.getKey());
+                Predicate pr =   cb.equal(nameExp, entry.getValue());
+                query.where(pr);
+            }
+            return null;
+        };
+        return userbasisDao.findAll(spe).size();
+    }
 
+    @Override
+    public List<UserbasisEntity> getList() {
+        return userbasisDao.findAll();
+    }
 }

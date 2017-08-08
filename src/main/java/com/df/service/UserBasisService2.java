@@ -2,13 +2,13 @@ package com.df.service;
 
 import com.df.interceptor.DataSource;
 import com.df.interceptor.DataSourceType;
-import com.df.model.UserbasisEntity;
+import com.df.model.UserBasis;
 
 import java.util.List;
 import java.util.Map;
 
 
-public interface UserBasisService {
+public interface UserBasisService2 {
 
 	/**
 	 * 保存
@@ -16,7 +16,7 @@ public interface UserBasisService {
 	 * @return
 	 */
 	@DataSource
-	public long Save(UserbasisEntity entity);
+	public long Save(UserBasis entity);
 	
 	/**
 	 * 删除
@@ -24,7 +24,7 @@ public interface UserBasisService {
 	 * @return
 	 */
 	@DataSource
-	public void Delete(long ID);
+	public Boolean Delete(long ID);
 	
 	/**
 	 * 获取信息
@@ -32,7 +32,7 @@ public interface UserBasisService {
 	 * @return
 	 */
 	@DataSource(DataSourceType.Slave)
-	public UserbasisEntity getEntity(long ID);
+	public UserBasis getEntity(long ID);
 
 	/**
 	 * 确认名字是否已经使用
@@ -56,14 +56,14 @@ public interface UserBasisService {
 	 * @return Boolean
 	 */
 	@DataSource(DataSourceType.Slave)
-	public UserbasisEntity getEntity(String phone);
+	public UserBasis getEntity(String phone);
 	
 	/**
 	 * 根据条件获取
 	 * @return
 	 */
 	@DataSource(DataSourceType.Slave)
-	public List<UserbasisEntity> getList(Map<String, Object> whereMap, String OrderBy,String OrderByProperties, int nStart, int nLimit);
+	public List<UserBasis> getList(Map<String, Object> whereMap, String OrderBy, int nStart, int nLimit);
 	
 	/**
 	 * 根据条件获取数据条数
@@ -77,5 +77,5 @@ public interface UserBasisService {
 	 * @return
 	 */
 	@DataSource(DataSourceType.Slave)
-	public List<UserbasisEntity> getList();
+	public List<UserBasis> getList();
 }
